@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=69", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "elmkit"
@@ -8,7 +8,7 @@ version = "0.1.0"
 description = ""
 readme = "README.md"
 requires-python = ">=3.13"
-authors = [{ name = "dontwakup", email= "jfwu.ai@hotmail.com" }]
+authors = [{ name = "dontwakup", email= "jfwu.ai@gmail.com" }]
 dependencies = [
     "openai>=1.99.3",
 ]
@@ -16,3 +16,6 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["elmkit*"]
+
+[project.urls]
+Homepage = "https://github.com/dontwakeup/elmkit"

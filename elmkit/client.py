@@ -3,6 +3,7 @@ import time
 from dataclasses import dataclass
 from typing import Any, Type
 from pydantic import BaseModel
+from elmkit.messages import normalize
 
 import openai
 from openai import AsyncOpenAI, OpenAI
@@ -116,8 +117,8 @@ class Client:
     
     def respond(
         self,
-        messages: str | list[dict],
-        instruction: str | None = None,
+        messages: Any,
+        instructions: str | None = None,
         text_format: Type[BaseModel] | None = None,
         stream: bool = False,
         tools: list | None = None,
@@ -133,6 +134,14 @@ class Client:
         last_error = None
         response = None
 
+        normalized_msgs = normalize(messages)
+        _msgs = normalized_msgs['messages']
+        _instructions = None
+        if instructions is not None:
+            _instructions = instructions
+        elif hasattr(normalized_msgs, 'instructions'):
+            _instructions = normalized_msgs['instructions']
+
         start_time = time.perf_counter()
         for attempt in range(self.max_retries):
             try:
@@ -143,8 +152,8 @@ class Client:
                 elif text_format:
                     response = self.client.responses.parse(
                         model=self.model,
-                        instructions=instruction,
-                        input=messages,
+                        instructions=_instructions,
+                        input=_msgs,
                         text_format=text_format,
                     )
                     break
@@ -152,8 +161,8 @@ class Client:
                 else:
                     response = self.client.responses.create(
                         model=self.model,
-                        instructions=instruction,
-                        input=messages,
+                        instructions=_instructions,
+                        input=_msgs,
                     )
                     break
             except openai.RateLimitError as e:
