@@ -1,5 +1,5 @@
-from .client import Client
-
-__all__ = [
-    "Client"
-]
+try:
+    from importlib.metadata import version, PackageNotFoundError
+    __version__ = version('elmkit')
+except PackageNotFoundError:
+    __version__ = 'dev'
